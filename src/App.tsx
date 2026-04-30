@@ -1,15 +1,30 @@
 import { useState, useEffect } from 'react'
 
+interface Bus {
+  id: number
+  numeroBus: string
+  placa: string
+  fechaCreacion: string
+  caracteristicas: string
+  marca: string
+  activo: boolean
+}
+
+interface PageResponse {
+  content: Bus[]
+  totalPages: number
+}
+
 const API_URL = 'http://localhost:8080/bus'
 const AUTH = 'Basic ' + btoa('admin:admin123')
 
 function App() {
-  const [buses, setBuses] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [page, setPage] = useState(0)
-  const [totalPages, setTotalPages] = useState(0)
-  const [selectedBus, setSelectedBus] = useState(null)
+  const [buses, setBuses] = useState<Bus[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState<number>(0)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -17,7 +32,7 @@ function App() {
       headers: { 'Authorization': AUTH }
     })
       .then(res => res.json())
-      .then(data => {
+      .then((data: PageResponse) => {
         setBuses(data.content)
         setTotalPages(data.totalPages)
         setLoading(false)
@@ -28,23 +43,23 @@ function App() {
       })
   }, [page])
 
-  const handleVerDetalle = (id) => {
+  const handleVerDetalle = (id: number): void => {
     fetch(`${API_URL}/${id}`, {
       headers: { 'Authorization': AUTH }
     })
       .then(res => res.json())
-      .then(data => setSelectedBus(data))
+      .then((data: Bus) => setSelectedBus(data))
   }
 
   return (
     <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h1>Lista de Buses</h1>
+      <h1>Lista de Buses - Civa</h1>
 
       {loading && <p>Cargando...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {!loading && (
-        <table border="1" cellPadding="8" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table border={1} cellPadding="8" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead style={{ background: '#003087', color: 'white' }}>
             <tr>
               <th>ID</th>
@@ -90,7 +105,7 @@ function App() {
           background: 'rgba(0,0,0,0.5)', display: 'flex',
           alignItems: 'center', justifyContent: 'center'
         }}>
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', minWidth: '300px' }}>
+          <div style={{ background: '#1a1a2e', color: 'white', padding: '2rem', borderRadius: '8px', minWidth: '300px' }}>
             <h2>Detalle del Bus</h2>
             <p><b>ID:</b> {selectedBus.id}</p>
             <p><b>N° Bus:</b> {selectedBus.numeroBus}</p>
